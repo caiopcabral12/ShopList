@@ -5,7 +5,7 @@ import (
 )
 
 type Products struct {
-	id          int
+	Id          int
 	Name        string
 	Description string
 	Price       float64
@@ -32,7 +32,7 @@ func SearchProducts() []Products {
 		if err != nil {
 			panic(err.Error())
 		}
-
+		p.Id = id
 		p.Name = name
 		p.Description = description
 		p.Price = price
@@ -60,3 +60,28 @@ func CreateProduct(name, description string, price float64, amount int) {
 		amount)
 	defer db.Close()
 }
+
+func DeleteProduct(id string) {
+	db := db.ConnectDB()
+
+	deleteProducts, err := db.Prepare("DELETE FROM products WHERE id=$1")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	deleteProducts.Exec(id)
+	defer db.Close()
+}
+
+/*func EditProduct(id, name, description string, price float64, amount int) {
+	db := db.ConnectDB()
+
+	editProducts, err := db.Prepare("UPDATE products  SET (name, description, price, amount) values($1, $2, $3, $4)")
+	if err != nil {
+		panic(err.Error())
+	}
+
+
+	defer db.Close()
+
+}*/
