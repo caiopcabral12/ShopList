@@ -52,29 +52,37 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 }
 
 func Edit(w http.ResponseWriter, r *http.Request) {
-	temp.ExecuteTemplate(w, "edit", nil)
+	getID := r.URL.Query().Get("id")
+	product := pd.EditProduct(getID)
+	temp.ExecuteTemplate(w, "edit", product)
 }
 
-/*func Edit(w http.ResponseWriter, r *http.Request) {
-	name := r.FormValue("name")
-	description := r.FormValue("description")
-	price := r.FormValue("price")
-	amount := r.FormValue("amount")
+func Update(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		id := r.FormValue("id")
+		name := r.FormValue("name")
+		description := r.FormValue("description")
+		price := r.FormValue("price")
+		amount := r.FormValue("amount")
 
-	priceConv, err := strconv.ParseFloat(price, 64)
-	if err != nil {
+		idConv, err := strconv.Atoi(id)
 		if err != nil {
-			log.Println("Error while converting price!", err)
+			log.Println("Error while converting Id!", err)
 		}
-	}
 
-	amountConv, err := strconv.Atoi(amount)
-	if err != nil {
-		log.Println("Error while converting Amount!", err)
-	}
+		priceConv, err := strconv.ParseFloat(price, 64)
+		if err != nil {
+			if err != nil {
+				log.Println("Error while converting price!", err)
+			}
+		}
 
-	getID := r.URL.Query().Get("id")
-	pd.EditProduct(getID, name, description, priceConv, amountConv)
+		amountConv, err := strconv.Atoi(amount)
+		if err != nil {
+			log.Println("Error while converting Amount!", err)
+		}
+
+		pd.UpdateProduct(idConv, name, description, priceConv, amountConv)
+	}
 	http.Redirect(w, r, "/", 301)
 }
-*/

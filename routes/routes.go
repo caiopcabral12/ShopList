@@ -11,5 +11,5 @@ func Route() {
 	http.HandleFunc("/insert", ct.Insert)
 	http.HandleFunc("/delete", ct.Delete)
 	http.HandleFunc("/edit", ct.Edit)
-
+	http.HandleFunc("/update", ct.Update)
 }

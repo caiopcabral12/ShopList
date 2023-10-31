@@ -15,7 +15,7 @@ type Products struct {
 func SearchProducts() []Products {
 	db := db.ConnectDB()
 
-	selectAllProducts, err := db.Query("Select * from products")
+	selectAllProducts, err := db.Query("Select * from products ORDER BY id ASC")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -73,15 +73,50 @@ func DeleteProduct(id string) {
 	defer db.Close()
 }
 
-/*func EditProduct(id, name, description string, price float64, amount int) {
+func EditProduct(id string) Products {
 	db := db.ConnectDB()
 
-	editProducts, err := db.Prepare("UPDATE products  SET (name, description, price, amount) values($1, $2, $3, $4)")
+	showProducts, err := db.Query("SELECT * FROM products WHERE id=$1", id)
 	if err != nil {
 		panic(err.Error())
 	}
 
+	ed := Products{}
+
+	for showProducts.Next() {
+		var id, amount int
+		var name, description string
+		var price float64
+
+		err = showProducts.Scan(&id, &name, &description, &price, &amount)
+
+		if err != nil {
+			panic(err.Error())
+		}
+		ed.Id = id
+		ed.Name = name
+		ed.Description = description
+		ed.Price = price
+		ed.Amount = amount
+	}
+	defer db.Close()
+	return ed
+
+}
+func UpdateProduct(id int, name, description string, price float64, amount int) {
+	db := db.ConnectDB()
+
+	updateProducts, err := db.Prepare("UPDATE products SET name=$1, description=$2, price=$3, amount=$4 WHERE id=$5")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	updateProducts.Exec(
+		name,
+		description,
+		price,
+		amount,
+		id)
 
 	defer db.Close()
-
-}*/
+}
